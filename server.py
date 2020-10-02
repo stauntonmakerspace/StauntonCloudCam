@@ -23,4 +23,4 @@ while True:
         (0, 0), (Width, 0), (Width, Height), (0, Height)]]
     for name, length in zip(["A", "B", "C", "D"], new_lengths):
         client.publish(name, struct.pack('f', length))  # publish
-        # float x = *(float *)&payload;
+        # float x = *(float *)&float_temp;
