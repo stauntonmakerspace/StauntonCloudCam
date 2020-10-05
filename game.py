@@ -32,15 +32,20 @@ def distance(x1, y1, z1, x2, y2, z2):
 Length, Width, Height = 41.91, 55.88, 30  # cm
 
 # Setup pygame
-rectangle = pygame.rect.Rect(176, 134, 17, 17)
-slider = pygame.rect.Rect(176, 134, 17, 17)
-slider_draging = False
-rectangle_draging = False
 
 SCREEN_WIDTH = int(Width) * 10
 W_R = Width / SCREEN_WIDTH
-SCREEN_HEIGHT = int(Height) * 10
-H_R = Height / SCREEN_HEIGHT
+SCREEN_HEIGHT = int(Length) * 10
+H_R = Length / SCREEN_HEIGHT
+SCREEN_DEPTH = int(Height) * 10
+D_R = Height / SCREEN_DEPTH
+
+rectangle = pygame.rect.Rect(int(SCREEN_WIDTH/2), int(SCREEN_HEIGHT/2), 17, 17)
+slider = pygame.rect.Rect(SCREEN_WIDTH - 17, 0, 17, 17)
+slider_draging = False
+rectangle_draging = False
+
+
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # TODO: Add Calibration Phase
@@ -62,10 +67,14 @@ while running:
                     mouse_x, mouse_y = event.pos
                     offset_x = rectangle.x - mouse_x
                     offset_y = rectangle.y - mouse_y
-                # elif slider: pass
+                if slider.collidepoint(event.pos):
+                    slider_draging = True
+                    mouse_x, mouse_y = event.pos
+                    offset_y = slider.y - mouse_y
 
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
+                slider_draging = False
                 rectangle_draging = False
 
         elif event.type == pygame.MOUSEMOTION:
@@ -73,8 +82,15 @@ while running:
                 mouse_x, mouse_y = event.pos
                 rectangle.x = mouse_x + offset_x
                 rectangle.y = mouse_y + offset_y
-                z = 0
-                new_lengths = [distance(rectangle.x * W_R, rectangle.y * H_R, z, x2, y2, z2) for x2, y2, z2 in [
+                new_lengths = [distance(rectangle.x * W_R, rectangle.y * H_R, slider.y * D_R, x2, y2, z2) for x2, y2, z2 in [
+                    (0, 0, 0), (Width, 0, 0), (Width, Length, 0), (0, Length, 0)]]
+                for name, length in zip(["A", "B", "C", "D"], new_lengths):
+                    client.publish(name, struct.pack('f', length))  # Publish
+                    print(f"{name} Target: {length} cm")
+            elif slider_draging:
+                mouse_x, mouse_y = event.pos
+                slider.y = mouse_y + offset_y
+                new_lengths = [distance(rectangle.x * W_R, rectangle.y * H_R, slider.y * D_R, x2, y2, z2) for x2, y2, z2 in [
                     (0, 0, 0), (Width, 0, 0), (Width, Length, 0), (0, Length, 0)]]
                 for name, length in zip(["A", "B", "C", "D"], new_lengths):
                     client.publish(name, struct.pack('f', length))  # Publish
@@ -85,6 +101,7 @@ while running:
     screen.fill(WHITE)
 
     pygame.draw.rect(screen, RED, rectangle)
+    pygame.draw.rect(screen, BLACK, slider)
 
     pygame.display.flip()
 
