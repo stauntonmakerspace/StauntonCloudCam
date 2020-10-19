@@ -1,15 +1,10 @@
 import paho.mqtt.client as mqtt  # import the client
 import struct
 import pygame
-
-BLACK = (0,   0,   0)
-WHITE = (255, 255, 255)
-RED = (255,   0,   0)
+import colors
 
 FPS = 30
-
 pygame.init()
-
 pygame.display.set_caption("Tracking System")
 
 # Connect to broker
@@ -62,7 +57,9 @@ while running:
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
+
                 if rectangle.collidepoint(event.pos):
+                    
                     rectangle_draging = True
                     mouse_x, mouse_y = event.pos
                     offset_x = rectangle.x - mouse_x
@@ -98,10 +95,10 @@ while running:
 
     # - draws (without updates) -
 
-    screen.fill(WHITE)
+    screen.fill(colors.WHITE)
 
-    pygame.draw.rect(screen, RED, rectangle)
-    pygame.draw.rect(screen, BLACK, slider)
+    pygame.draw.rect(screen, colors.RED, rectangle)
+    pygame.draw.rect(screen, colors.BLACK, slider)
 
     pygame.display.flip()
 
