@@ -82,7 +82,7 @@ while running:
                 new_lengths = [distance(rectangle.x * W_R, rectangle.y * H_R, slider.y * D_R, x2, y2, z2) for x2, y2, z2 in [
                     (0, 0, 0), (Width, 0, 0), (Width, Length, 0), (0, Length, 0)]]
                 for name, length in zip(["A", "B", "C", "D"], new_lengths):
-                    client.publish(name, struct.pack('f', length))  # Publish
+                    client.publish(name, str(length))# struct.pack('f', length))
                     print("{} Target: {} cm".format(name,length))
             elif slider_draging:
                 mouse_x, mouse_y = event.pos
@@ -90,7 +90,7 @@ while running:
                 new_lengths = [distance(rectangle.x * W_R, rectangle.y * H_R, slider.y * D_R, x2, y2, z2) for x2, y2, z2 in [
                     (0, 0, 0), (Width, 0, 0), (Width, Length, 0), (0, Length, 0)]]
                 for name, length in zip(["A", "B", "C", "D"], new_lengths):
-                    client.publish(name, struct.pack('f', length))  # Publish
+                    client.publish(name, str(length))# struct.pack('f', length))  # Publish
                     print("{} Target: {} cm".format(name,length))
 
     # - draws (without updates) -

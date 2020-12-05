@@ -5,8 +5,8 @@
 // #include <Adafruit_INA219.h>
 
 // Define stepper motor connections and steps per revolution:
-#define dirPin 2
-#define stepPin 3
+#define dirPin D0
+#define stepPin D5
 #define stepsPerRevolution 200
 
 // Connect to the WiFi
@@ -38,19 +38,15 @@ void setup_wifi() {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  for (int i = 0; i < length; i++) {
-    char receivedChar = (char)payload[i];
-    Serial.print(receivedChar);
-    if (receivedChar == '0')
-      // ESP8266 Huzzah outputs are "reversed"
-      digitalWrite(ledPin, HIGH);
-    if (receivedChar == '1')
-      digitalWrite(ledPin, LOW);
-  }
-  Serial.println();
+ char buff_p[length];
+for (int i = 0; i < length; i++)
+{
+buff_p[i] = (char)payload[i];
+}
+buff_p[length] = '\0';
+String msg_p = String(buff_p);
+float val = msg_p.toFloat(); //to float
+  Serial.println(val);
 }
 
 
@@ -81,17 +77,20 @@ void setup()
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
 
-  pinMode(ledPin, OUTPUT);
+  pinMode(stepPin, OUTPUT);
+  pinMode(dirPin, OUTPUT);
 }
-int steps2take = 0;
+int steps2take = 100;
 void loop()
 {
+  steps2take = 100;
   if (steps2take > 0) {
     digitalWrite(dirPin, HIGH);
     digitalWrite(stepPin, HIGH);
     delayMicroseconds(500);
     digitalWrite(stepPin, LOW);
     delayMicroseconds(500);
+    steps2take--;
   }
   if (steps2take < 0) {
     digitalWrite(dirPin, LOW);
@@ -99,6 +98,7 @@ void loop()
     delayMicroseconds(500);
     digitalWrite(stepPin, LOW);
     delayMicroseconds(500);
+    steps2take++;
   }
   if (!client.connected()) {
     reconnect();
