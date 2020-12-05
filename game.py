@@ -83,7 +83,7 @@ while running:
                     (0, 0, 0), (Width, 0, 0), (Width, Length, 0), (0, Length, 0)]]
                 for name, length in zip(["A", "B", "C", "D"], new_lengths):
                     client.publish(name, struct.pack('f', length))  # Publish
-                    print(f"{name} Target: {length} cm")
+                    print("{} Target: {} cm".format(name,length))
             elif slider_draging:
                 mouse_x, mouse_y = event.pos
                 slider.y = mouse_y + offset_y
@@ -91,7 +91,7 @@ while running:
                     (0, 0, 0), (Width, 0, 0), (Width, Length, 0), (0, Length, 0)]]
                 for name, length in zip(["A", "B", "C", "D"], new_lengths):
                     client.publish(name, struct.pack('f', length))  # Publish
-                    print(f"{name} Target: {length} cm")
+                    print("{} Target: {} cm".format(name,length))
 
     # - draws (without updates) -
 

@@ -27,5 +27,5 @@ while True:
         (0, 0, 0), (Width, 0, 0), (Width, Length, 0), (0, Length, 0)]]
     for name, length in zip(["A", "B", "C", "D"], new_lengths):
         client.publish(name, struct.pack('f', length))  # Publish
-        print(f"{name} Target: {length} cm")
+        print("{} Target: {} cm".format(name, length))
     client.loop_stop()  # Stop the Loop
